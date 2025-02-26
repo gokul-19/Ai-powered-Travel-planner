@@ -5,7 +5,7 @@ import textwrap
 import streamlit as st
 
 # Get API Key from Streamlit Secrets
-API_KEY = st.secrets["GOOGLE_API_KEY"]
+API_KEY = st.secrets["AIzaSyA0gFVSeBYBoexZs3BWZNvyiTTU0e8UcDg"]
 
 
 # Validate API Key
