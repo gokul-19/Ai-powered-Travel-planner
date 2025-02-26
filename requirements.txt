@@ -1,4 +1,4 @@
 streamlit
-google-generativeai
-deep-translator
-python-dotenv
+langchain
+langchain-google-genai
+google-api-core
