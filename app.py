@@ -2,7 +2,7 @@ import streamlit as st
 from langchain import LangChain
 from langchain.community import GoogleGenAI  # Correcting the import path
 
-lang_chain = LangChain(api_key="your_langchain_api_key")
+lang_chain = LangChain(api_key="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")
 google_genai_service = GoogleGenAI(api_key="AIzaSyA0gFVSeBYBoexZs3BWZNvyiTTU0e8UcDg")
 
 def main():
