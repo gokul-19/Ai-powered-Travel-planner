@@ -2,7 +2,16 @@ import streamlit as st
 import google.generativeai as genai
 from deep_translator import GoogleTranslator
 import textwrap
-import streamlit as st
+from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+
+
+# Get API Key from Streamlit Secrets
+API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 # Validate API Key
 if not API_KEY:
@@ -10,7 +19,7 @@ if not API_KEY:
     st.stop()
 
 # Configure Google GenAI
-genai.configure(api_key="AIzaSyA0gFVSeBYBoexZs3BWZNvyiTTU0e8UcDg")
+genai.configure(api_key=API_KEY)
 
 # Language options
 LANGUAGES = {
@@ -30,6 +39,10 @@ def main():
 
     source = st.text_input("🛫 Enter Source Location")
     destination = st.text_input("🛬 Enter Destination Location")
+    
+    # Date and time selection
+    travel_date = st.date_input("📅 Select Travel Date", datetime.today())
+    travel_time = st.time_input("⏰ Select Travel Time", datetime.now().time())
 
     special_needs = st.radio(
         "Do you need special travel assistance?",
@@ -45,29 +58,32 @@ def main():
             return
 
         with st.spinner("🔄 Fetching travel recommendations... Please wait!"):
-            travel_options = find_travel_options(source, destination, special_needs)
-
+            travel_options = find_travel_options(source, destination, special_needs, travel_date, travel_time)
+            
             st.subheader("🔹 Travel Recommendations:")
             translated_text = translate_text(travel_options, LANGUAGES[language])
             st.markdown(translated_text)
 
-
-def find_travel_options(source, destination, special_needs):
+def find_travel_options(source, destination, special_needs, travel_date, travel_time):
     assistance_text = ""
     if special_needs == "Elderly Assistance":
         assistance_text = " Provide senior-friendly travel options with rest stops and easy access."
     elif special_needs == "Disability Support":
         assistance_text = " Suggest wheelchair-accessible transport and travel assistance."
-
+    
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
-
+    
+    formatted_date_time = f"on {travel_date.strftime('%B %d, %Y')} at {travel_time.strftime('%I:%M %p')}"
+    
     try:
-        response = model.generate_content(f"Find travel options from {source} to {destination}.{assistance_text}")
+        response = model.generate_content(
+            f"Find travel options from {source} to {destination} {formatted_date_time}.{assistance_text}"
+        )
         travel_info = response.text if hasattr(response, "text") else "No response generated."
-
+    
     except Exception as e:
         travel_info = f"⚠️ Error generating response: {str(e)}"
-
+    
     return travel_info
 
 def translate_text(text, target_lang):
