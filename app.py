@@ -4,17 +4,13 @@ from deep_translator import GoogleTranslator
 import textwrap
 import streamlit as st
 
-# Get API Key from Streamlit Secrets
-API_KEY = st.secrets["GOOGLE_API_KEY"]
-
-
 # Validate API Key
 if not API_KEY:
     st.error("⚠️ API Key is missing! Please check your .env file.")
     st.stop()
 
 # Configure Google GenAI
-genai.configure(api_key=API_KEY)
+genai.configure(api_key="AIzaSyA0gFVSeBYBoexZs3BWZNvyiTTU0e8UcDg")
 
 # Language options
 LANGUAGES = {
