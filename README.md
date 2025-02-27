@@ -1,6 +1,6 @@
-# AI-Powered Travel Planner
+# 📌 AI Yatra Guide 🇮🇳🚆  
 
-Welcome to the AI-Powered Travel Planner! This tool is designed to assist users in finding the best travel options between a given source and destination. Below, you'll find instructions on how to set up and use the application.
+🚀 **An AI-powered travel planning assistant to help you find the best travel options across India!** 
 
 ## Overview
 This application leverages Streamlit for the user interface, LangChain for managing conversations, and Google's Generative AI for generating travel recommendations. It also integrates real-time travel data from APIs such as Google Maps, Skyscanner, and IRCTC.
