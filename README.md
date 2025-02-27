@@ -29,8 +29,6 @@ Make sure you have Streamlit, LangChain, and Google Generative AI installed. You
 pip install streamlit langchain google-generativeai
 ```
 
-### 3. Configure API Keys:
-Replace "YOUR_GOOGLE_API_KEY" and other API placeholders in the code with your actual API keys.
 
 ## Usage
 ### 1. Run the Application:
