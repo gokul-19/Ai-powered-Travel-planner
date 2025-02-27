@@ -10,11 +10,9 @@ os.environ["GRPC_DNS_RESOLVER"] = "native"
 st.set_page_config(page_title="AI Travel Planner", layout="wide")
 st.title("AI-Powered Travel Planner")
 
-# Store API Key in session state
-DEFAULT_API_KEY = os.getenv("GOOGLE_GEMINI_API_KEY")  # Load from env variable
-
+# Retrieve API Key from Streamlit Secrets
 if "api_key" not in st.session_state:
-    st.session_state.api_key = DEFAULT_API_KEY  # Auto-configure from env if available
+    st.session_state.api_key = st.secrets["api"].get("GOOGLE_GEMINI_API_KEY", None)
 
 if "llm" not in st.session_state and st.session_state.api_key:
     try:
@@ -31,25 +29,26 @@ if "llm" not in st.session_state and st.session_state.api_key:
 # Sidebar Configuration
 with st.sidebar:
     st.title("Configuration")
-    api_key = st.text_input(
-        "Enter your Google Gemini API Key",
-        placeholder="Paste your API key here...",
-        value=st.session_state.api_key or "",  # Pre-fill if available
-        key="api_key_input"
-    )
+    if not st.session_state.api_key:
+        api_key = st.text_input(
+            "Enter your Google Gemini API Key",
+            placeholder="Paste your API key here...",
+            key="api_key_input",
+            type="password"
+        )
 
-    if api_key and api_key != st.session_state.api_key:
-        st.session_state.api_key = api_key
-        try:
-            st.session_state.llm = ChatGoogleGenerativeAI(
-                model="gemini-2.0-flash",
-                google_api_key=api_key,
-                temperature=0.7,
-                retry=Retry(initial=1.0, maximum=60.0, multiplier=2.0, deadline=900.0)
-            )
-        except Exception as e:
-            st.error(f"Invalid API Key or authentication error: {e}")
-            st.session_state.llm = None
+        if api_key:
+            st.session_state.api_key = api_key
+            try:
+                st.session_state.llm = ChatGoogleGenerativeAI(
+                    model="gemini-2.0-flash",
+                    google_api_key=api_key,
+                    temperature=0.7,
+                    retry=Retry(initial=1.0, maximum=60.0, multiplier=2.0, deadline=900.0)
+                )
+            except Exception as e:
+                st.error(f"Invalid API Key or authentication error: {e}")
+                st.session_state.llm = None
 
 # User input
 source = st.text_input("Source Location:", "")
