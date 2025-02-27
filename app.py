@@ -11,10 +11,10 @@ st.set_page_config(page_title="AI Travel Planner", layout="wide")
 st.title("AI-Powered Travel Planner")
 
 # Retrieve API Key from Streamlit Secrets
-if "api_key" not in st.session_state:
-    st.session_state.api_key = st.secrets["api"].get("GOOGLE_GEMINI_API_KEY", None)
+st.session_state.api_key = st.secrets["api"].get("GOOGLE_GEMINI_API_KEY", None)
 
-if "llm" not in st.session_state and st.session_state.api_key:
+# Initialize LLM if API key is available
+if st.session_state.api_key:
     try:
         st.session_state.llm = ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
@@ -25,30 +25,9 @@ if "llm" not in st.session_state and st.session_state.api_key:
     except Exception as e:
         st.error(f"Invalid API Key or authentication error: {e}")
         st.session_state.llm = None
-
-# Sidebar Configuration
-with st.sidebar:
-    st.title("Configuration")
-    if not st.session_state.api_key:
-        api_key = st.text_input(
-            "Enter your Google Gemini API Key",
-            placeholder="Paste your API key here...",
-            key="api_key_input",
-            type="password"
-        )
-
-        if api_key:
-            st.session_state.api_key = api_key
-            try:
-                st.session_state.llm = ChatGoogleGenerativeAI(
-                    model="gemini-2.0-flash",
-                    google_api_key=api_key,
-                    temperature=0.7,
-                    retry=Retry(initial=1.0, maximum=60.0, multiplier=2.0, deadline=900.0)
-                )
-            except Exception as e:
-                st.error(f"Invalid API Key or authentication error: {e}")
-                st.session_state.llm = None
+else:
+    st.session_state.llm = None
+    st.error("API Key not found. Please configure it in Streamlit Secrets.")
 
 # User input
 source = st.text_input("Source Location:", "")
@@ -70,4 +49,4 @@ if st.button("Search Travel Options") and st.session_state.llm:
         except Exception as e:
             st.error(f"Error: {str(e)}")
 else:
-    st.warning("Please configure an API Key to use this tool.")
+    st.warning("Please ensure an API Key is configured in Streamlit Secrets.")
